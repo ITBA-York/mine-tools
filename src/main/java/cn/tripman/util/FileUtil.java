@@ -38,7 +38,10 @@ public class FileUtil {
         LineHelper lineReader = LineHelper.getInstance();
         while (lineReader.readNext(reader.readLine())) {
             semaphore.acquire();
-            Constants.POOL.execute(() -> consumer.accept(lineReader.getLine()));
+            Constants.POOL.execute(() -> {
+                consumer.accept(lineReader.getLine());
+                semaphore.release();
+            });
         }
     }
 
