@@ -120,16 +120,7 @@ public class DateUtil {
     }
 
 
-    /**
-     * 比较两个时间大小
-     *
-     * @param time1 12:22
-     * @param time2 23:56
-     * @return 大小
-     * @throws ParseException 转化异常
-     * @author guangjun.ma
-     * @date 2020/7/15 15:16
-     */
+
     public static boolean compareTwoTime(String time1, String time2) throws ParseException {
         //如果想比较日期则写成"yyyy-MM-dd"就可以了
         SimpleDateFormat sdf = new SimpleDateFormat("hh:mm");
@@ -145,15 +136,7 @@ public class DateUtil {
     }
 
 
-    /**
-     * 当前日期新增N天
-     *
-     * @param days             2 可以为 -1
-     * @param returnDateFormat 返回字符串的格式，如"MM月dd日"
-     * @return 07月17日
-     * @author guangjun.ma
-     * @date 2020/7/15 15:55
-     */
+
     public static String addDays(int days, String returnDateFormat) {
         Date date = DateUtils.addDays(new Date(), days);
         return DateFormatUtils.format(date, returnDateFormat);
@@ -182,15 +165,7 @@ public class DateUtil {
         }
     }
 
-    /**
-     * 获取时区时间
-     *
-     * @param format "yyyy年MM月dd日 HH:mm" 格式
-     * @param offSet 偏移量
-     * @return String
-     * @author guangjun.ma
-     * @date 2020/7/21 17:53
-     */
+
     public static final String getZoneTime(String format, Long offSet) {
         try {
             SimpleDateFormat dateFormat = new SimpleDateFormat(format);
