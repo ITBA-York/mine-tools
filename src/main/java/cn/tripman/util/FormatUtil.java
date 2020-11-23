@@ -6,10 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -18,6 +15,10 @@ import java.util.stream.Collectors;
 public class FormatUtil {
 
     private static final ObjectMapper mapper = new ObjectMapper();
+
+    private static final String split = "\\.";
+
+    private static final List<String> empty = Arrays.asList("", "-");
 
     public static <T> T format(String json, Class<T> tClass) throws Exception {
         JsonNode jsonNode = mapper.readTree(json);
@@ -31,7 +32,14 @@ public class FormatUtil {
      * 把一个JSON对象转化成类型对象
      */
     private static <T> T obj2Clazz(JsonNode jsonNode, Class<T> tClass) {
+        if (jsonNode == null || jsonNode.isArray()) {
+            return null;
+        }
         try {
+            Object base = JsonUtil.toBaseObj(tClass, jsonNode);
+            if (base != null) {
+                return (T) base;
+            }
             //实例化类
             T t = tClass.newInstance();
             //字段返回类型列表
@@ -40,23 +48,35 @@ public class FormatUtil {
                     .filter(field -> field.getAnnotation(TripJson.class) != null)
                     .peek(field -> field.setAccessible(true))
                     .collect(Collectors.toSet());
-            //List节点
-            fields.stream().filter(field -> field.getType() == List.class)
-                    .forEach(field -> convertArray(t, field, findByPath(field.getAnnotation(TripJson.class).value(), jsonNode)));
-            //Object节点
-            fields.stream().filter(field -> field.getType() != List.class)
-                    .forEach(field -> convertObject(t, field, findByPath(field.getAnnotation(TripJson.class).value(), jsonNode)));
+            //List节点 获取list并赋值
+            List<Field> arrays = fields.stream().filter(field -> field.getType() == List.class)
+                    .collect(Collectors.toList());
+            for (Field field : arrays) {
+                List<JsonNode> nodes = findByPathArray(field, jsonNode);
+                convertArray(t, field, nodes);
+            }
+            //Object节点 获取对象并赋值
+            List<Field> objects = fields.stream().filter(field -> field.getType() != List.class)
+                    .collect(Collectors.toList());
+            for (Field field : objects) {
+                JsonNode node = findByPath(field, jsonNode);
+                setObject(t, field, node);
+            }
             return t;
         } catch (Exception ignored) {
         }
         return null;
     }
 
-    public static JsonNode findByPath(String paths, JsonNode jsonNode) {
-        if (paths == null || "".equals(paths) || "-".equals(paths)) {
-            return jsonNode;
+    /**
+     * Field属性不是list直接获取
+     */
+    public static JsonNode findByPath(Field field, JsonNode jsonNode) {
+        String paths = field.getAnnotation(TripJson.class).value();
+        if (empty.contains(paths)) {
+            return jsonNode.get(field.getName());
         }
-        for (String path : paths.split("\\.")) {
+        for (String path : paths.split(split)) {
             jsonNode = jsonNode.get(path);
             if (jsonNode == null) {
                 return null;
@@ -67,20 +87,28 @@ public class FormatUtil {
 
 
     /**
+     * Field属性是list要考虑多个
+     */
+    public static List<JsonNode> findByPathArray(Field field, JsonNode jsonNode) {
+        String paths = field.getAnnotation(TripJson.class).value();
+        if (empty.contains(paths)) {
+            return Arrays.asList(jsonNode.get(field.getName()));
+        }
+        return JsonUtil.childNodes(paths, jsonNode);
+    }
+
+
+    /**
      * 根节点处理List
      */
-    public static void convertArray(Object t, Field field, JsonNode array) {
-        if (t == null || array == null) {
+    public static <T> void convertArray(Object t, Field field, List<JsonNode> nodeList) {
+        if (t == null || nodeList == null) {
             return;
         }
         try {
-            Class clazz = ClassUtil.fieldClass(field);
-            List list = new ArrayList();
-            Iterator<JsonNode> iterator = array.elements();
-            while (iterator.hasNext()) {
-                JsonNode jsonNode = iterator.next();
-                list.add(obj2Clazz(jsonNode, clazz));
-            }
+            Class<T> clazz = ClassUtil.fieldClass(field);
+            List<T> list = new ArrayList<>();
+            nodeList.forEach(array -> list.add(obj2Clazz(array, clazz)));
             field.set(t, list);
         } catch (Exception ignored) {
         }
@@ -90,7 +118,7 @@ public class FormatUtil {
     /**
      * 根节点处理对象
      */
-    public static void convertObject(Object t, Field field, JsonNode node) {
+    public static void setObject(Object t, Field field, JsonNode node) {
         if (t == null || field == null || node == null) {
             return;
         }

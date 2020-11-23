@@ -14,19 +14,19 @@ public class HttpUtil {
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     private static final OkHttpClient client = HttpClientHelper.getUnsafeOkHttpClient();
 
-    public String get(String api) {
+    public static String get(String api) {
         return get(api, null, 1);
     }
 
-    public String get(String api, int retry) {
+    public static String get(String api, int retry) {
         return get(api, null, retry);
     }
 
-    public String get(String api, Map<String, String> header) {
+    public static String get(String api, Map<String, String> header) {
         return get(api, header, 1);
     }
 
-    public String get(String api, Map<String, String> header, int retry) {
+    public static String get(String api, Map<String, String> header, int retry) {
         Request.Builder request = new Request.Builder().url(api);
         if (header != null) {
             header.keySet().forEach(key -> request.addHeader(key, header.get(key)));
@@ -48,19 +48,19 @@ public class HttpUtil {
         return null;
     }
 
-    public String post(String api, String content) {
+    public static String post(String api, String content) {
         return post(api, content, null, 1);
     }
 
-    public String post(String api, String content, int retry) {
+    public static String post(String api, String content, int retry) {
         return post(api, content, null, retry);
     }
 
-    public String post(String api, String content, Map<String, String> header) {
+    public static String post(String api, String content, Map<String, String> header) {
         return post(api, content, header, 1);
     }
 
-    public String post(String api, String content, Map<String, String> header, int retry) {
+    public static String post(String api, String content, Map<String, String> header, int retry) {
         RequestBody body = RequestBody.create(JSON, content);
         Request.Builder request = new Request.Builder().url(api).post(body);
         if (header != null) {
