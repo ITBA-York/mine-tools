@@ -31,41 +31,37 @@ public class FormatUtil {
      * 读取类型的字段列表
      * 把一个JSON对象转化成类型对象
      */
-    private static <T> T obj2Clazz(JsonNode jsonNode, Class<T> tClass) {
+    private static <T> T obj2Clazz(JsonNode jsonNode, Class<T> tClass) throws Exception {
         if (jsonNode == null || jsonNode.isArray()) {
             return null;
         }
-        try {
-            Object base = JsonUtil.toBaseObj(tClass, jsonNode);
-            if (base != null) {
-                return (T) base;
-            }
-            //实例化类
-            T t = tClass.newInstance();
-            //字段返回类型列表
-            Set<Field> fields = ClassUtil.fieldList(tClass)
-                    .stream()
-                    .filter(field -> field.getAnnotation(TripJson.class) != null)
-                    .peek(field -> field.setAccessible(true))
-                    .collect(Collectors.toSet());
-            //List节点 获取list并赋值
-            List<Field> arrays = fields.stream().filter(field -> field.getType() == List.class)
-                    .collect(Collectors.toList());
-            for (Field field : arrays) {
-                List<JsonNode> nodes = findByPathArray(field, jsonNode);
-                convertArray(t, field, nodes);
-            }
-            //Object节点 获取对象并赋值
-            List<Field> objects = fields.stream().filter(field -> field.getType() != List.class)
-                    .collect(Collectors.toList());
-            for (Field field : objects) {
-                JsonNode node = findByPath(field, jsonNode);
-                setObject(t, field, node);
-            }
-            return t;
-        } catch (Exception ignored) {
+        Object base = JsonUtil.toBaseObj(tClass, jsonNode);
+        if (base != null) {
+            return (T) base;
         }
-        return null;
+        //实例化类
+        T t = tClass.newInstance();
+        //字段返回类型列表
+        Set<Field> fields = ClassUtil.fieldList(tClass)
+                .stream()
+                .filter(field -> field.getAnnotation(TripJson.class) != null)
+                .peek(field -> field.setAccessible(true))
+                .collect(Collectors.toSet());
+        //List节点 获取list并赋值
+        List<Field> arrays = fields.stream().filter(field -> field.getType() == List.class)
+                .collect(Collectors.toList());
+        for (Field field : arrays) {
+            List<JsonNode> nodes = findByPathArray(field, jsonNode);
+            convertArray(t, field, nodes);
+        }
+        //Object节点 获取对象并赋值
+        List<Field> objects = fields.stream().filter(field -> field.getType() != List.class)
+                .collect(Collectors.toList());
+        for (Field field : objects) {
+            JsonNode node = findByPath(field, jsonNode);
+            setObject(t, field, node);
+        }
+        return t;
     }
 
     /**
@@ -108,7 +104,9 @@ public class FormatUtil {
         try {
             Class<T> clazz = ClassUtil.fieldClass(field);
             List<T> list = new ArrayList<>();
-            nodeList.forEach(array -> list.add(obj2Clazz(array, clazz)));
+            for (JsonNode array : nodeList) {
+                list.add(obj2Clazz(array, clazz));
+            }
             field.set(t, list);
         } catch (Exception ignored) {
         }
