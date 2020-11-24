@@ -12,5 +12,4 @@ public @interface TripJson {
 
     String value() default "";
 
-    boolean tSerialize() default true;
 }
