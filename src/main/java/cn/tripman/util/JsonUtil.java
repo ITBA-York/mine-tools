@@ -1,5 +1,6 @@
 package cn.tripman.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -23,8 +24,32 @@ public class JsonUtil {
         return mapper.writeValueAsString(object);
     }
 
+    public static String toJSON(Object object, String defaultValue) {
+        try {
+            return mapper.writeValueAsString(object);
+        } catch (JsonProcessingException e) {
+            return defaultValue;
+        }
+    }
+
+    public static String toJSONDefaultNull(Object object) {
+        try {
+            return mapper.writeValueAsString(object);
+        } catch (JsonProcessingException e) {
+            return null;
+        }
+    }
+
     public static <T> T parse(String json, Class<T> clazz) throws Exception {
         return mapper.readValue(json, clazz);
+    }
+
+    public static <T> T parseDefaultNull(String json, Class<T> clazz) {
+        try {
+            return mapper.readValue(json, clazz);
+        } catch (JsonProcessingException e) {
+            return null;
+        }
     }
 
     public static JsonNode readTree(String json) throws Exception {
