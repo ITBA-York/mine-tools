@@ -47,6 +47,10 @@ public class WxSeo implements Serializable {
         return JsonUtil.toJSON(this);
     }
 
+    public void printString() throws Exception {
+        System.out.println(postString());
+    }
+
     public String postApi() throws Exception {
         return String.format(Constants.WX_SEO, accessToken);
     }
