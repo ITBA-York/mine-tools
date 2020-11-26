@@ -1,6 +1,7 @@
 package cn.tripman.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -18,6 +19,10 @@ public class JsonUtil {
     private static final ObjectMapper mapper = new ObjectMapper();
 
     private static final String DOT = "\\.";
+
+    static {
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    }
 
 
     public static String toJSON(Object object) throws Exception {
