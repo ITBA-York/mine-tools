@@ -56,6 +56,17 @@ public class TripArray<T> extends ArrayList<T> {
         }
     }
 
+    public void accept(Consumer<T> consumer, int thread) throws Exception {
+        Semaphore semaphore = new Semaphore(thread);
+        for (T t : this) {
+            semaphore.acquire();
+            Constants.POOL.execute(() -> {
+                consumer.accept(t);
+                semaphore.release();
+            });
+        }
+    }
+
     public <R> Map<String, T> toMap(Function<T, R> function) {
         Map<String, T> map = new HashMap<>();
         this.forEach(e -> map.put(function.apply(e).toString(), e));
