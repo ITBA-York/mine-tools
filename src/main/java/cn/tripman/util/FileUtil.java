@@ -4,7 +4,6 @@ package cn.tripman.util;
 import cn.tripman.constant.Constants;
 import cn.tripman.helper.LineHelper;
 import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -12,10 +11,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.Semaphore;
 import java.util.function.Consumer;
 
 /**
@@ -42,32 +39,10 @@ public class FileUtil {
                 }
                 switch (cell.getCellType()) {
                     case HSSFCell.CELL_TYPE_NUMERIC:
-                        String string = cell.getNumericCellValue() + "";
-                        if (string.contains("E")) {
-                            DecimalFormat df = new DecimalFormat("0.00");
-                            string = df.format(cell.getNumericCellValue());
-                        }
-                        if (string.endsWith(".00")) {
-                            string = string.substring(0, string.length() - 3);
-                        }
-                        if (string.endsWith(".0")) {
-                            string = string.substring(0, string.length() - 2);
-                        }
-                        map.put(key, string);
-                        if (HSSFDateUtil.isCellDateFormatted(cell)) {
-                            Date date = HSSFDateUtil.getJavaDate(Double.valueOf(string));
-                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                            map.put(key, sdf.format(date));
-                        }
+                        map.put(key, ExcelUtil.getNumberString(cell));
                         break;
                     case HSSFCell.CELL_TYPE_STRING:
-                        if ("TRUE".equals(cell.getStringCellValue())) {
-                            map.put(key, true);
-                        } else if ("FALSE".equals(cell.getStringCellValue())) {
-                            map.put(key, false);
-                        } else {
-                            map.put(key, cell.getStringCellValue());
-                        }
+                        map.put(key, ExcelUtil.getString(cell));
                         break;
                     case HSSFCell.CELL_TYPE_BOOLEAN:
                         map.put(key, cell.getBooleanCellValue());
