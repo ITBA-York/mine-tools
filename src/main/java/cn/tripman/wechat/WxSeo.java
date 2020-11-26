@@ -42,4 +42,12 @@ public class WxSeo implements Serializable {
         String api = String.format(Constants.WX_SEO, accessToken);
         HttpUtil.post(api, JsonUtil.toJSON(this));
     }
+
+    public String postString() throws Exception {
+        return JsonUtil.toJSON(this);
+    }
+
+    public String postApi() throws Exception {
+        return String.format(Constants.WX_SEO, accessToken);
+    }
 }
