@@ -36,10 +36,10 @@ public class WxSeoDataDto {
     private String title;
 
     @JsonProperty("subtitle")
-    private String subtitle;
+    private List<String> subtitle;
 
     @JsonProperty("abstract")
-    private String abstracts;
+    private List<String> abstracts;
 
     @JsonProperty("mainbody")
     private String mainbody;
@@ -54,10 +54,10 @@ public class WxSeoDataDto {
     private List<String> tags;
 
     @JsonProperty("time_publish")
-    private int publish;
+    private long publish;
 
     @JsonProperty("time_modify")
-    private int modify;
+    private long modify;
 
 
 }
