@@ -2,7 +2,6 @@ package cn.tripman.util;
 
 
 import cn.tripman.constant.Constants;
-import org.apache.commons.collections4.ListUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
