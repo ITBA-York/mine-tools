@@ -53,5 +53,11 @@ public class WxSeoDataDto {
     @JsonProperty("tag")
     private List<String> tags;
 
+    @JsonProperty("time_publish")
+    private int publish;
+
+    @JsonProperty("time_modify")
+    private int modify;
+
 
 }
