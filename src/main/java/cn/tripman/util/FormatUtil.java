@@ -1,6 +1,7 @@
 package cn.tripman.util;
 
 import cn.tripman.helper.TripJson;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -15,6 +16,10 @@ import java.util.stream.Collectors;
 public class FormatUtil {
 
     private static final ObjectMapper mapper = new ObjectMapper();
+
+    static {
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    }
 
     private static final String split = "\\.";
 
