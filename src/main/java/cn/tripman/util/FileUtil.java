@@ -3,6 +3,7 @@ package cn.tripman.util;
 
 import cn.tripman.constant.Constants;
 import cn.tripman.helper.LineHelper;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -24,6 +25,37 @@ public class FileUtil {
         while (lineReader.readNext(reader.readLine())) {
             result.add(lineReader.getLine());
         }
+        return result;
+    }
+
+    public static String readLastLine(File file) throws Exception {
+        String result = null;
+        if (file == null || !file.exists()) {
+            return null;
+        }
+        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8));
+        String line = reader.readLine();
+        while (line != null) {
+            result = line;
+            line = reader.readLine();
+        }
+        return result;
+    }
+
+    public static String readLastEmpty(File file) throws Exception {
+        String result = null;
+        int num = 0;
+        if (file == null || !file.exists()) {
+            return null;
+        }
+        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8));
+        String line = reader.readLine();
+        while (StringUtils.isNotEmpty(line)) {
+            num++;
+            result = line;
+            line = reader.readLine();
+        }
+        System.out.println(num);
         return result;
     }
 
