@@ -4,6 +4,7 @@ package cn.tripman.util;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
 
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -120,7 +121,6 @@ public class DateUtil {
     }
 
 
-
     public static boolean compareTwoTime(String time1, String time2) throws ParseException {
         //如果想比较日期则写成"yyyy-MM-dd"就可以了
         SimpleDateFormat sdf = new SimpleDateFormat("hh:mm");
@@ -134,7 +134,6 @@ public class DateUtil {
             return false;
         }
     }
-
 
 
     public static String addDays(int days, String returnDateFormat) {
@@ -180,4 +179,34 @@ public class DateUtil {
         return null;
     }
 
+    public static Timestamp toTimestamp(Date date) {
+        if (date == null) {
+            return null;
+        }
+        return new Timestamp(date.getTime());
+    }
+
+    public static int getSeaSon() {
+        Calendar cal = Calendar.getInstance();
+        int month = cal.get(Calendar.MONTH);
+        switch (month) {
+            case 2:
+            case 3:
+            case 4:
+                return 1;
+            case 5:
+            case 6:
+            case 7:
+                return 2;
+            case 8:
+            case 9:
+            case 10:
+                return 3;
+            case 11:
+            case 0:
+            case 1:
+                return 4;
+        }
+        return 0;
+    }
 }
