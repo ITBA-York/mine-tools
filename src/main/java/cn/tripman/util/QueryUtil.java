@@ -30,7 +30,7 @@ public class QueryUtil {
         }
         BeanListHandler<T> beanListHandler = new BeanListHandler(tClass);
         Connection connection = THREAD_LOCAL.get().getConnection();
-        List<T> result = QUERY_RUNNER.query(THREAD_LOCAL.get().getConnection(), sql, beanListHandler);
+        List<T> result = QUERY_RUNNER.query(connection, sql, beanListHandler);
         connection.close();
         return result;
     }
