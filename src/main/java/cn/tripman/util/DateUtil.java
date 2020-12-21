@@ -211,6 +211,9 @@ public class DateUtil {
     }
 
     public static int getSeaSon(Date date) {
+        if (date == null) {
+            return 0;
+        }
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         int month = cal.get(Calendar.MONTH);
