@@ -36,6 +36,8 @@ public class QueryUtil {
 
     public static int execute(String sql, Object... params) throws Exception {
         Connection connection = THREAD_LOCAL.get().getConnection();
-        return QUERY_RUNNER.execute(connection, sql, params);
+        int result = QUERY_RUNNER.execute(connection, sql, params);
+        connection.close();
+        return result;
     }
 }
