@@ -1,7 +1,6 @@
 package cn.tripman.util;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
 
@@ -33,5 +32,10 @@ public class QueryUtil {
         List<T> result = QUERY_RUNNER.query(connection, sql, beanListHandler);
         connection.close();
         return result;
+    }
+
+    public static int execute(String sql, Object... params) throws Exception {
+        Connection connection = THREAD_LOCAL.get().getConnection();
+        return QUERY_RUNNER.execute(connection, sql, params);
     }
 }
