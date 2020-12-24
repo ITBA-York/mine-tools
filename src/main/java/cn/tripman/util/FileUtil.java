@@ -30,7 +30,7 @@ public class FileUtil {
 
     public static void printLine(File file) throws Exception {
         if (file == null || !file.exists()) {
-            return result;
+            return;
         }
         BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8));
         LineHelper lineReader = LineHelper.getInstance();
