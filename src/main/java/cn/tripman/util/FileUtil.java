@@ -28,6 +28,17 @@ public class FileUtil {
         return result;
     }
 
+    public static void printLine(File file) throws Exception {
+        if (file == null || !file.exists()) {
+            return result;
+        }
+        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8));
+        LineHelper lineReader = LineHelper.getInstance();
+        while (lineReader.readNext(reader.readLine())) {
+            System.out.println(lineReader.getLine());
+        }
+    }
+
     public static String readLastLine(File file) throws Exception {
         String result = null;
         if (file == null || !file.exists()) {
