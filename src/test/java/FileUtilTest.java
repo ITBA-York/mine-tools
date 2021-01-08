@@ -5,7 +5,6 @@ import java.io.File;
 
 public class FileUtilTest {
     public static void main(String[] args) throws Exception {
-        System.out.println(DateUtil.getSeaSon());
-//        FileUtil.readLine(new File("Z:\\test.txt")).forEach(System.out::println);
+        FileUtil.printLine(new File("F:\\ssd\\userreview_translate_map.sql"));
     }
 }

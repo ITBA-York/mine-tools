@@ -14,6 +14,9 @@ public class QueryUtil {
     private static final ThreadLocal<ComboPooledDataSource> THREAD_LOCAL = new ThreadLocal<>();
 
     public static void getConnection(DbProperties dbProperties) throws Exception {
+        if (THREAD_LOCAL.get() != null) {
+            return;
+        }
         ComboPooledDataSource ds = new ComboPooledDataSource();
         ds.setDriverClass(dbProperties.getDriverEnum().getValue());
         ds.setJdbcUrl(dbProperties.getUrl());
