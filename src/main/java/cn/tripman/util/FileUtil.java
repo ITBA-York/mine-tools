@@ -77,8 +77,13 @@ public class FileUtil {
         }
         BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8));
         LineHelper lineReader = LineHelper.getInstance();
+        int num = 0;
         while (lineReader.readNext(reader.readLine())) {
             semaphore.acquire();
+            if (num % 100 == 0) {
+                System.out.println(reader.readLine());
+            }
+            num++;
             Constants.POOL.execute(() -> {
                 consumer.accept(lineReader.getLine());
                 semaphore.release();
