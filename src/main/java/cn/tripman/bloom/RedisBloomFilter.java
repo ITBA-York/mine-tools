@@ -5,6 +5,7 @@ import com.google.common.hash.Hashing;
 import com.google.common.primitives.Longs;
 import lombok.Data;
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Pipeline;
 
 import java.nio.charset.Charset;
@@ -19,19 +20,19 @@ public class RedisBloomFilter {
     private int numHashFunctions;
     private int bitmapLength;
 
-    private Jedis jedis;
+    private JedisPool pool;
 
     /**
      * 构造布隆过滤器。注意：在同一业务场景下，三个参数务必相同
      *
      * @param numApproxElements 预估元素数量
      * @param fpp               可接受的最大误差（假阳性率）
-     * @param jedis             redis
+     * @param pool              redis
      */
-    public RedisBloomFilter(int numApproxElements, double fpp, Jedis jedis) {
+    public RedisBloomFilter(int numApproxElements, double fpp, JedisPool pool) {
         this.numApproxElements = numApproxElements;
         this.fpp = fpp;
-        this.jedis = jedis;
+        this.pool = pool;
 
         bitmapLength = (int) (-numApproxElements * Math.log(fpp) / (Math.log(2) * Math.log(2)));
         numHashFunctions = Math.max(1, (int) Math.round((double) bitmapLength / numApproxElements * Math.log(2)));
@@ -80,6 +81,7 @@ public class RedisBloomFilter {
             throw new RuntimeException("键值均不能为空");
         }
         String actualKey = BF_KEY_PREFIX.concat(key);
+        Jedis jedis = pool.getResource();
         try (Pipeline pipeline = jedis.pipelined()) {
             for (long index : getBitIndices(element)) {
                 pipeline.setbit(actualKey, index, true);
@@ -87,6 +89,7 @@ public class RedisBloomFilter {
             pipeline.syncAndReturnAll();
         }
         jedis.expire(actualKey, expireSec);
+        jedis.close();
     }
 
     /**
@@ -101,6 +104,7 @@ public class RedisBloomFilter {
         }
         String actualKey = BF_KEY_PREFIX.concat(key);
         boolean result;
+        Jedis jedis = pool.getResource();
         try (Pipeline pipeline = jedis.pipelined()) {
             for (long index : getBitIndices(element)) {
                 pipeline.getbit(actualKey, index);
@@ -108,6 +112,7 @@ public class RedisBloomFilter {
             //保证都是true
             result = !pipeline.syncAndReturnAll().contains(false);
         }
+        jedis.close();
         return result;
     }
 

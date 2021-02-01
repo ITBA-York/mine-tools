@@ -1,6 +1,9 @@
 package cn.tripman.bloom;
 
-import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class RedisBloomFilterTest {
     private static final int NUM_APPROX_ELEMENTS = 60000 * 10000;
@@ -9,12 +12,15 @@ public class RedisBloomFilterTest {
     private static RedisBloomFilter redisBloomFilter;
 
     public static void main(String[] args) {
-        Jedis jedis = new Jedis();
-        redisBloomFilter = new RedisBloomFilter(NUM_APPROX_ELEMENTS, FPP, jedis);
+        JedisPool pool = RedisPool.getPool();
+        redisBloomFilter = new RedisBloomFilter(NUM_APPROX_ELEMENTS, FPP, pool);
         System.out.println("numHashFunctions: " + redisBloomFilter.getNumHashFunctions());
         System.out.println("bitmapLength: " + redisBloomFilter.getBitmapLength());
         String key = "comment";
         for (int i = 0; i < 1 * 1000 * 1000; i++) {
+            if (i % 1000 == 0) {
+                System.out.println(i);
+            }
             redisBloomFilter.insert(key, i + "", EXPIRE);
         }
         //42067
@@ -22,7 +28,9 @@ public class RedisBloomFilterTest {
         System.out.println(redisBloomFilter.mayExist(key, 43067 + ""));
         System.out.println(redisBloomFilter.mayExist(key, 42068 + ""));
         System.out.println(redisBloomFilter.mayExist(key, 42069 + ""));
-    }
 
+        Map<String, String> map = new HashMap<>();
+        map.put("1", "");
+    }
 
 }
