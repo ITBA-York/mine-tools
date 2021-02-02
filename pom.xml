@@ -96,11 +96,10 @@
         </dependency>
         <!-- https://mvnrepository.com/artifact/io.codis.jodis/jodis -->
         <dependency>
-            <groupId>io.codis.jodis</groupId>
-            <artifactId>jodis</artifactId>
-            <version>0.5.1</version>
+            <groupId>com.redislabs</groupId>
+            <artifactId>jrebloom</artifactId>
+            <version>2.0.0</version>
         </dependency>
-
     </dependencies>
     <build>
         <plugins>

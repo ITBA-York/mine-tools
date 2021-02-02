@@ -16,7 +16,7 @@ public class RedisBloomFilterTest {
         redisBloomFilter = new RedisBloomFilter(NUM_APPROX_ELEMENTS, FPP, pool);
         System.out.println("numHashFunctions: " + redisBloomFilter.getNumHashFunctions());
         System.out.println("bitmapLength: " + redisBloomFilter.getBitmapLength());
-        String key = "comment";
+        String key = "comment2";
         for (int i = 0; i < 1 * 1000 * 1000; i++) {
             if (i % 1000 == 0) {
                 System.out.println(i);
