@@ -1,4 +1,3 @@
-import cn.tripman.aop.NativeAop;
 import cn.tripman.util.FileUtil;
 
 import java.io.File;
