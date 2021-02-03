@@ -1,7 +1,7 @@
 package cn.tripman.redis;
 
 import cn.tripman.bloom.RedisPool;
-import cn.tripman.service.CacheService;
+import cn.tripman.aop.CacheInterface;
 import org.apache.commons.collections4.CollectionUtils;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.params.SetParams;
@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class JedisClient implements CacheService {
+public class JedisClient implements CacheInterface {
 
     @Override
     public String getKey(String key) {

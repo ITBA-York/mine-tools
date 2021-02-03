@@ -1,7 +1,5 @@
 package cn.tripman.aop;
 
-import cn.tripman.service.CacheService;
-import cn.tripman.service.CacheServiceClient;
 import cn.tripman.util.ClassUtil;
 import cn.tripman.util.GsonUtil;
 import com.google.common.collect.ArrayListMultimap;
@@ -9,7 +7,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
-import org.aspectj.lang.annotation.Aspect;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -17,10 +14,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@Aspect
-public class CacheListInterceptor<E> {
+public class CacheInterceptor<E> {
 
-    private final CacheService client = CacheServiceClient.getClient();
+    private final CacheInterface client = CacheClient.getClient();
 
     /**
      * 参数列表举例1：

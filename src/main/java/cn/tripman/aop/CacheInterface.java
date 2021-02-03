@@ -1,9 +1,9 @@
-package cn.tripman.service;
+package cn.tripman.aop;
 
 import java.util.List;
 import java.util.Map;
 
-public interface CacheService {
+public interface CacheInterface {
 
     String getKey(String key);
 
