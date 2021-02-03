@@ -7,16 +7,17 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
  * @author hero
  */
 public class ClassUtil {
+    /**
+     * 一个不容易出现的字符
+     */
+    private static final String replace = "§";
 
     /**
      * 获取字段的类型 ，List里面的类型
@@ -75,7 +76,7 @@ public class ClassUtil {
      */
     public static String join(Object[] args) {
         StringBuilder builder = new StringBuilder();
-        if (args == null) {
+        if (args == null || args.length == 0) {
             return builder.toString();
         }
         for (Object object : args) {
@@ -99,7 +100,31 @@ public class ClassUtil {
         }
     }
 
-    public static void main(String[] args) {
-        System.out.println(join(new Object[]{"string", null, "ddds"}));
+    /**
+     * 获取method返回的数据类型
+     */
+    public static Class getReturnClass(Method method) {
+        if (method.getReturnType() == List.class) {
+            return (Class) ((ParameterizedType) method.getGenericReturnType()).getActualTypeArguments()[0];
+        }
+        return method.getReturnType();
+    }
+
+    /**
+     * 参数转化
+     */
+    public static Map<Object, String> joinKeys(String pre, Object[] args) {
+        Map<Object, String> keyMap = new LinkedHashMap<>();
+        int index = ClassUtil.getListIndex(args);
+        if (index == -1) {
+            keyMap.put(pre, ClassUtil.join(args));
+            return keyMap;
+        }
+        List<Object> list = (List<Object>) args[index];
+        args[index] = replace;
+        //list转 string 在替换 list节点的 string
+        list.forEach(e -> keyMap.put(e, pre + "_" + ClassUtil.join(args).replace(replace, e == null ? "" : e.toString())));
+        args[index] = list;
+        return keyMap;
     }
 }

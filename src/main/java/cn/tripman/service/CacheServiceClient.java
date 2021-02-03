@@ -1,5 +1,6 @@
 package cn.tripman.service;
 
+import java.util.Arrays;
 import java.util.ServiceLoader;
 
 public class CacheServiceClient {
@@ -14,6 +15,6 @@ public class CacheServiceClient {
     }
 
     public static void main(String[] args) {
-        System.out.println(getClient().getKey(""));
+        System.out.println(getClient().mGets(Arrays.asList("")));
     }
 }

@@ -26,8 +26,12 @@ public class JedisClient implements CacheService {
             return map;
         }
         try (Jedis jedis = RedisPool.getPool().getResource()) {
-            List<String> results = jedis.mget((String[]) keys.toArray());
+            String[] strings = new String[keys.size()];
+            List<String> results = jedis.mget(keys.toArray(strings));
             for (int i = 0; i < keys.size(); i++) {
+                if (results.get(i) == null) {
+                    continue;
+                }
                 map.put(keys.get(i), results.get(i));
             }
         }
